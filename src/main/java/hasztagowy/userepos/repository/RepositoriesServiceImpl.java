@@ -29,7 +29,13 @@ public class RepositoriesServiceImpl {
 
         uri="https://api.github.com/users/"+name+"/repos?sort=updated&direction=desc&per_page=100";
 
-        return getData(uri);
+        Flux<Repository> repositoryFlux=getData(uri);
+
+
+        return repositoryFlux.map(x->{
+            x.setUpdatedRecently(Repository.checkLastUpdateDate(x.getUpdatedAt()));
+            return x;
+        });
     }
 
     private Flux<Repository> getData(String url){
