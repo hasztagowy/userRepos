@@ -1,8 +1,10 @@
 package hasztagowy.userepos.repository;
 
+import hasztagowy.userepos.exceptions.UserNotFoundException;
 import hasztagowy.userepos.model.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,7 +12,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.naming.ServiceUnavailableException;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -57,6 +58,8 @@ public class RepositoriesServiceImpl {
                 .get()
                 .uri(url+"&page="+page)
                 .retrieve()
+                .onStatus(httpStatus -> httpStatus.value()== HttpStatus.INTERNAL_SERVER_ERROR.value(), clientResponse -> Mono.error(new ServiceUnavailableException("Service is not available")))
+                .onStatus(HttpStatus::is4xxClientError, clientResponse ->Mono.error(new UserNotFoundException("User not found")))
                 .toEntityFlux(Repository.class);
 
     }
