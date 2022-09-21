@@ -1,5 +1,6 @@
 package hasztagowy.userepos.controller;
 
+import hasztagowy.userepos.exceptions.ExceptionModel;
 import hasztagowy.userepos.exceptions.UserExistException;
 import hasztagowy.userepos.model.AuthUserModel;
 import hasztagowy.userepos.service.AuthUserService;
@@ -25,7 +26,8 @@ public class AuthUserController {
         try {
             return authUserService.saveUser(authUserModel);
         } catch (UserExistException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exist in database");
+            ExceptionModel ex= new ExceptionModel(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex);
         }
     }
 }
