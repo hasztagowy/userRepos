@@ -2,6 +2,7 @@ package hasztagowy.userepos.service;
 
 import hasztagowy.userepos.exceptions.UserNotFoundException;
 import hasztagowy.userepos.model.RepositoryModel;
+import hasztagowy.userepos.utils.ValidateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -28,11 +29,13 @@ public class RepositoriesServiceImpl {
 
     public Flux<RepositoryModel> getUserRepositories(String name, Optional<String> sort, Optional<String>  orderby, Optional<String> type){
 
-        uri="https://api.github.com/users/"+name+"/repos?sort="+sort.get()+"&direction="+orderby.get()+"&per_page=100";
+        uri="https://api.github.com/users/"+name+"/repos";
+
+        String url= ValidateParams.generateUrl(uri,sort,orderby);
 
         page=1;
 
-        Flux<RepositoryModel> repositoryFlux=getData(uri);
+        Flux<RepositoryModel> repositoryFlux=getData(url);
 
 
         if(type.isPresent()) {
