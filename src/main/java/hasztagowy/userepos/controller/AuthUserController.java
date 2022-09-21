@@ -7,11 +7,9 @@ import hasztagowy.userepos.service.AuthUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController
+@RestController("/v1")
 public class AuthUserController {
 
     AuthUserService authUserService;
@@ -29,5 +27,9 @@ public class AuthUserController {
             ExceptionModel ex= new ExceptionModel(HttpStatus.BAD_REQUEST.value(), e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex);
         }
+    }
+    @PutMapping("user/changePassword")
+    public ResponseEntity<?> changePassword(@RequestBody AuthUserModel authUserModel){
+        return null;
     }
 }

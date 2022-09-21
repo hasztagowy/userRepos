@@ -11,5 +11,8 @@ public interface AuthUserService {
 
     ResponseEntity<?> saveUser(AuthUserModel authUser) throws UserExistException;
 
+    ResponseEntity<?> changePassword(String password);
+
+
 
 }
