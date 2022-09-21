@@ -13,7 +13,7 @@ import java.time.temporal.ChronoUnit;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Repository {
+public class RepositoryModel {
 
     @JsonProperty("name")
     private String name;
