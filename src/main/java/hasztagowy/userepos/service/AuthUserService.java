@@ -13,6 +13,7 @@ public interface AuthUserService {
 
     ResponseEntity<?> changePassword(String password);
 
+    ResponseEntity<?> deleteUser(String name) throws UserNotFoundException;
 
 
 }

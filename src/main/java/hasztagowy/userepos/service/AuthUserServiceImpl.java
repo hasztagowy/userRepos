@@ -4,8 +4,8 @@ import hasztagowy.userepos.entity.AuthUser;
 import hasztagowy.userepos.exceptions.UserExistException;
 import hasztagowy.userepos.exceptions.UserNotFoundException;
 import hasztagowy.userepos.model.AuthUserModel;
+import hasztagowy.userepos.model.AuthUserResponseModel;
 import hasztagowy.userepos.repository.AuthUserRepository;
-import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -47,11 +47,24 @@ public class AuthUserServiceImpl implements AuthUserService {
 
     @Override
     public ResponseEntity<?> changePassword(String password) {
-        HttpHeaders headers=new HttpHeaders();
-        String auth= headers.get("Authorization").get(0);
-        byte[] decodedHeader= Base64.getDecoder().decode(auth);
-        String[] decodedString=new String(decodedHeader).split(":");
-        authUserRepository.changePassword(decodedString[0],password);
+        HttpHeaders headers = new HttpHeaders();
+        String auth = headers.get("Authorization").get(0);
+        byte[] decodedHeader = Base64.getDecoder().decode(auth);
+        String[] decodedString = new String(decodedHeader).split(":");
+        authUserRepository.changePassword(decodedString[0], password);
         return ResponseEntity.status(HttpStatus.OK).body(decodedString[0]);
+    }
+
+    @Override
+    public ResponseEntity<?> deleteUser(String name) throws UserNotFoundException {
+        AuthUser authUser = authUserRepository.findFirstByUserName(name);
+        if (authUser == null) {
+            throw new UserNotFoundException("user not found");
+        }
+        authUserRepository.deleteUser(name);
+        AuthUserResponseModel model = new AuthUserResponseModel(authUser.getUserName(), authUser.getRole(), "user was deleted");
+
+        return ResponseEntity.status(HttpStatus.OK).body(model);
+
     }
 }
