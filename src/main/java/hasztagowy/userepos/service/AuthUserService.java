@@ -4,17 +4,17 @@ import hasztagowy.userepos.exceptions.EmptyValueException;
 import hasztagowy.userepos.exceptions.UserExistException;
 import hasztagowy.userepos.exceptions.UserNotFoundException;
 import hasztagowy.userepos.model.AuthUserModel;
-import org.springframework.http.ResponseEntity;
+import hasztagowy.userepos.model.AuthUserResponseModel;
 
 public interface AuthUserService {
 
-    ResponseEntity<?> findUserByName(String name) throws UserNotFoundException;
+    AuthUserModel findUserByName(String name) throws UserNotFoundException;
 
-    ResponseEntity<?> saveUser(AuthUserModel authUser) throws UserExistException, EmptyValueException;
+    AuthUserModel saveUser(AuthUserModel authUser) throws UserExistException, EmptyValueException;
 
-    ResponseEntity<?> changePassword(String password);
+    String changePassword(String password);
 
-    ResponseEntity<?> deleteUser(String name) throws UserNotFoundException;
+    AuthUserResponseModel deleteUser(String name) throws UserNotFoundException;
 
 
 }

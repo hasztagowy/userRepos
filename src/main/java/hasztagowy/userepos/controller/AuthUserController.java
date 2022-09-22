@@ -21,7 +21,7 @@ public class AuthUserController {
     @PostMapping("/users")
     public ResponseEntity<?> addNewUser(@RequestBody AuthUserModel authUserModel) {
         try {
-            return authUserService.saveUser(authUserModel);
+         return ResponseEntity.status(HttpStatus.CREATED).body(authUserService.saveUser(authUserModel));
         } catch (UserExistException | EmptyValueException e ) {
             ExceptionModel ex= new ExceptionModel(HttpStatus.BAD_REQUEST.value(), e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex);
@@ -38,6 +38,6 @@ public class AuthUserController {
         if(name.isEmpty() || name.isBlank()){
             throw  new UserNotFoundException("user not found");
         }
-      return authUserService.deleteUser(name);
+      return ResponseEntity.ok().body(authUserService.deleteUser(name));
     }
 }
