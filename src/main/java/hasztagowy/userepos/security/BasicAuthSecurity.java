@@ -2,6 +2,7 @@ package hasztagowy.userepos.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,7 +23,8 @@ public class BasicAuthSecurity {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests()
-                .antMatchers("/user").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.POST, "/v1/users", "*/users/*").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic(Customizer.withDefaults())
