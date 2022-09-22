@@ -1,6 +1,7 @@
 package hasztagowy.userepos.service;
 
 import hasztagowy.userepos.entity.AuthUser;
+import hasztagowy.userepos.exceptions.EmptyValueException;
 import hasztagowy.userepos.exceptions.UserExistException;
 import hasztagowy.userepos.exceptions.UserNotFoundException;
 import hasztagowy.userepos.model.AuthUserModel;
@@ -35,7 +36,12 @@ public class AuthUserServiceImpl implements AuthUserService {
     }
 
     @Override
-    public ResponseEntity<?> saveUser(AuthUserModel authUser) throws UserExistException {
+    public ResponseEntity<?> saveUser(AuthUserModel authUser) throws UserExistException, EmptyValueException {
+        if (authUser.getUserName().isEmpty() || authUser.getUserName().isBlank()) {
+            throw new EmptyValueException("user cannot be null or empty");
+        } else if (authUser.getPassword().isEmpty() || authUser.getPassword().isBlank()) {
+            throw new EmptyValueException("password cannot be null or empty");
+        }
         if (authUserRepository.findFirstByUserName(authUser.getUserName()) != null) {
             throw new UserExistException("User with that userName is already in database!");
         } else {

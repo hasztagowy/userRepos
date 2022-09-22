@@ -19,7 +19,6 @@ import java.util.Optional;
 public class RepositoriesServiceImpl {
 
     private final WebClient.Builder webClientBuilder;
-    private String uri;
     private int page;
 
     @Autowired
@@ -29,7 +28,7 @@ public class RepositoriesServiceImpl {
 
     public Flux<RepositoryModel> getUserRepositories(String name, Optional<String> sort, Optional<String> orderby, Optional<String> type) {
 
-        uri = "https://api.github.com/users/" + name + "/repos";
+        String uri = "https://api.github.com/users/" + name + "/repos";
 
         String url = ValidateParams.generateUrl(uri, sort, orderby);
 
@@ -37,8 +36,8 @@ public class RepositoriesServiceImpl {
 
         Flux<RepositoryModel> repositoryFlux = getData(url);
 
-
-        if (type.isPresent()) {
+        //if type is not in (true, false) ignore
+        if (type.isPresent() && (type.get().equals("true") || type.get().equals("false"))) {
             return repositoryFlux.map(x -> {
                 x.setUpdatedRecently(RepositoryModel.checkLastUpdateDate(x.getUpdatedAt()));
                 return x;
@@ -54,15 +53,15 @@ public class RepositoriesServiceImpl {
     private Flux<RepositoryModel> getData(String url) {
         return getNextPage(url, page)
                 .expand(fluxResponseEntity -> {
-                    fluxResponseEntity.getHeaders().get("Link");
+                    fluxResponseEntity.getHeaders().get("Link"); //get header where GitHub api puts information about next page
                     if (fluxResponseEntity.getHeaders().get("Link") == null || !(fluxResponseEntity.getHeaders().get("Link").toString().contains(("rel=" + "\"next\"")))) {
-                        return Mono.empty();
+                        return Mono.empty(); //if header have no value with "rel="next" return empty mono
                     }
                     page++;
                     System.out.println(page);
                     return getNextPage(url, page);
                 })
-                .flatMap(HttpEntity::getBody);
+                .flatMap(HttpEntity::getBody); //to return flux
     }
 
     private Mono<ResponseEntity<Flux<RepositoryModel>>> getNextPage(String url, int page) {
@@ -71,9 +70,9 @@ public class RepositoriesServiceImpl {
                 .get()
                 .uri(url + "&page=" + page)
                 .retrieve()
-                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.INTERNAL_SERVER_ERROR.value(), clientResponse -> Mono.error(new ServiceUnavailableException("Service is not available")))
-                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.FORBIDDEN.value(), clientResponse -> Mono.error(new ServiceUnavailableException("Forbiden")))
-                .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(new UserNotFoundException("User not found")))
+                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.INTERNAL_SERVER_ERROR.value(), clientResponse -> Mono.error(new ServiceUnavailableException("Service is not available"))) //api error
+                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.FORBIDDEN.value(), clientResponse -> Mono.error(new ServiceUnavailableException("Forbidden"))) //when user used up the query limit
+                .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(new UserNotFoundException("User not found"))) //not found user
                 .toEntityFlux(RepositoryModel.class);
     }
 }

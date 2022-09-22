@@ -1,5 +1,6 @@
 package hasztagowy.userepos.controller;
 
+import hasztagowy.userepos.exceptions.EmptyValueException;
 import hasztagowy.userepos.exceptions.ExceptionModel;
 import hasztagowy.userepos.exceptions.UserExistException;
 import hasztagowy.userepos.exceptions.UserNotFoundException;
@@ -25,7 +26,7 @@ public class AuthUserController {
     public ResponseEntity<?> addNewUser(@RequestBody AuthUserModel authUserModel) {
         try {
             return authUserService.saveUser(authUserModel);
-        } catch (UserExistException e) {
+        } catch (UserExistException | EmptyValueException e ) {
             ExceptionModel ex= new ExceptionModel(HttpStatus.BAD_REQUEST.value(), e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex);
         }
