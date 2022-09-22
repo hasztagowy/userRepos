@@ -14,13 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/v1")
 public class AuthUserController {
-
-    AuthUserService authUserService;
-
     @Autowired
-    public AuthUserController(AuthUserService authUserService) {
-        this.authUserService = authUserService;
-    }
+    private AuthUserService authUserService;
+
 
     @PostMapping("/users")
     public ResponseEntity<?> addNewUser(@RequestBody AuthUserModel authUserModel) {

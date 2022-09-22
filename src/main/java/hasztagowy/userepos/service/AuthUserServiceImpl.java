@@ -18,12 +18,10 @@ import java.util.Base64;
 
 @Service
 public class AuthUserServiceImpl implements AuthUserService {
-
     @Autowired
-    AuthUserRepository authUserRepository;
+    private  AuthUserRepository authUserRepository;
     @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
-
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public ResponseEntity<?> findUserByName(String name) throws UserNotFoundException {
