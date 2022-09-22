@@ -14,7 +14,7 @@ public class ValidateParams {
 
         }
 
-        if (orderby.isEmpty() || orderby.get().isBlank() || !orderby.get().equals("desc") || !orderby.get().equals("asc")) {
+        if (orderby.isEmpty() || orderby.get().isBlank() || (!orderby.get().equals("desc") && !orderby.get().equals("asc")  )) {
             orderby = Optional.of("asc");
         }
 
