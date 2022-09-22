@@ -25,6 +25,7 @@ public class BasicAuthSecurity {
                 .authorizeHttpRequests()
                 .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.POST, "/v1/users", "*/users/*").hasAuthority("ADMIN")
+                .antMatchers("/h2-console/*").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic(Customizer.withDefaults())
